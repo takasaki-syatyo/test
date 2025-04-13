@@ -1,0 +1,141 @@
+
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>イラスト診断メーカー</title>
+  <style>
+    body {
+      font-family: 'Helvetica Neue', sans-serif;
+      padding: 20px;
+      background: #f4f4f4;
+      color: #2c2c2c;
+      line-height: 1.6;
+    }
+
+    h1 {
+      color: #444;
+      font-size: 1.8em;
+      text-align: center;
+      border-bottom: 2px solid #ccc;
+      padding-bottom: 10px;
+    }
+
+    label {
+      display: block;
+      margin-top: 15px;
+      font-weight: bold;
+    }
+
+    select, input[type="checkbox"] {
+      margin: 5px 0;
+      font-size: 1em;
+    }
+
+    input[type="checkbox"] {
+      transform: scale(1.2);
+      margin-right: 8px;
+    }
+
+    button {
+      margin-top: 20px;
+      padding: 12px 24px;
+      font-size: 1.1em;
+      background: #555;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      width: 100%;
+    }
+
+    button:hover {
+      background: #333;
+    }
+
+    .result {
+      margin-top: 30px;
+      padding: 20px;
+      background: #eaeaea;
+      border-left: 6px solid #999;
+      border-radius: 8px;
+    }
+
+    @media (max-width: 600px) {
+      body {
+        padding: 15px;
+      }
+
+      h1 {
+        font-size: 1.5em;
+      }
+
+      button {
+        font-size: 1em;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <h1>イラスト診断メーカー</h1>
+
+  <form id="illustForm">
+    <label>どんなイラストが欲しい？</label>
+    <select id="base">
+      <option value="3000">アイコン（バストアップ）</option>
+      <option value="5000">アイコン（上半身）</option>
+      <option value="7000">アイコン（全身）</option>
+      <option value="10000">一枚絵</option>
+      <option value="12000">キャラクターシート</option>
+    </select>
+
+    <label>オプションを選んでください</label>
+    <label><input type="checkbox" value="1500" id="bg">背景描きこみ（＋1000〜2000円）</label>
+    <label><input type="checkbox" value="1000" id="item">アイテム・武器（＋1000円）</label>
+    <label><input type="checkbox" value="500" id="expression">表情差分（＋500円）</label>
+    <label><input type="checkbox" value="2000" id="bust_diff">バストアップ差分（＋2000円）</label>
+
+    <label>特殊キャラの内容</label>
+    <label><input type="checkbox" value="1000" id="mecha">ロボット・モンスター（＋1000円）</label>
+    <label><input type="checkbox" value="500" id="beast">動物・獣人（＋500円）</label>
+
+    <label>割引適用</label>
+    <label><input type="checkbox" value="-1000" id="gray">グレースケール（−1000円）</label>
+    <label><input type="checkbox" value="-2000" id="lineart">線画のみ（−2000円）</label>
+
+    <button type="button" onclick="calculate()">診断する</button>
+  </form>
+
+  <div class="result" id="result" style="display:none;"></div>
+
+  <script>
+    function calculate() {
+      const base = parseInt(document.getElementById("base").value);
+      const options = ["bg", "item", "expression", "bust_diff", "mecha", "beast", "gray", "lineart"];
+      let total = base;
+      let details = [];
+
+      options.forEach(opt => {
+        const checkbox = document.getElementById(opt);
+        if (checkbox.checked) {
+          total += parseInt(checkbox.value);
+          details.push(checkbox.nextSibling.textContent.trim());
+        }
+      });
+
+      const result = document.getElementById("result");
+      result.style.display = "block";
+      result.innerHTML = `
+        <h2>おすすめプラン</h2>
+        <p><strong>基本プラン：</strong>${document.getElementById("base").selectedOptions[0].text}</p>
+        <p><strong>追加内容：</strong>${details.length ? details.join("、") : "なし"}</p>
+        <p><strong>お見積り金額：</strong>${total.toLocaleString()}円（税込）</p>
+        <p style="margin-top:10px;">※二次使用の場合は＋${Math.floor(total * 0.4)}円</p>
+      `;
+    }
+  </script>
+
+</body>
+</html>
